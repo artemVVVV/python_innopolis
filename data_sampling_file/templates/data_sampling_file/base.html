@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">    
+  	<link rel="stylesheet" href="{% static 'data_sampling_file/css/base_styles.css' %}">
+	<title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a href="#" class="navbar-brand d-flex align-items-center">
+             <strong id="count_file">Данные в БД: Кол-во файлов: {{ allfiles }} </strong>
+            </a>
+          <div class="dropdown">
+            <button onclick="myFunction()" class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarHeader" aria-controls="navbarHeader" 
+            aria-expanded="true" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span></button>
+              <div id="myDropdown" class="dropdown-content">
+                <a href="{% url 'all_files' %}">Главная страница</a>
+                <a href="{% url 'file_for_date' %}">Отчет за период</a>
+                <a href="{% url 'work_to_text' %}">Работа с текстом</a>
+                <a href="{% url 'logout_user' %}">Выход</a>
+              </div>
+          </div>         
+        </div>
+      </div>
+      <script src="{% static 'data_sampling_file/js/menu.js' %}"></script>
+
+    <!-- Информация о пользователе -->
+    <div class="sidenav mt-3 mb-3">
+        <a href="#" class="align-items-center">
+            <strong>Пользователь: {{ user.last_name }} {{ user.first_name }} e-mail: {{user.email}}</strong>
+    </div>
+    
+    <!-- Меню функций -->
+    <div class="p-4 px-5 rounded menu mb-3">
+        <div class="d-flex flex-column">
+                <small class="mb-1"><a href="{% url 'all_files' %}" class="link-light"><i class="bi bi-list"></i>Список всех файлов</a></small>
+                <small class="mb-1"><a href="{% url 'my_files' %}" class="link-light"><i class="bi bi-list"></i>Мои файлы</a></small></small>
+                <small class="mb-1"><a href="{% url 'add_file' %}" class="link-light"><i class="bi bi-plus-lg"></i>Добавить файл</a></small>
+        </div>
+    </div>
+
+<!-- Обновление данных по кол-ву файлов в БД -->
+<script>
+  (function loop() {
+      setTimeout(function () {
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.open( "GET", "http://127.0.0.1:8000/data_sampl_file/api/stat_all_file/", false );
+          xmlHttp.send( null );
+          var files_json = JSON.parse(xmlHttp.responseText);
+          document.getElementById("count_file").innerHTML = "Данные в БД: Кол-во файлов: " + files_json.length;
+          loop()
+      }, 3000);
+  }());
+  </script>
+
+<!-- Paginator start -->
+{% if page_obj.has_other_pages %}
+<nav class="list-pages">
+    <ul>
+{% if page_obj.has_previous %}
+<li class="page-num">
+  <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+</li>
+{% endif %}
+
+        {% for p in paginator.page_range %}
+    {% if page_obj.number == p %}
+        <li class="page-num page-num-selected">{{ p }}</li>
+    {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2  %}
+        <li class="page-num">
+            <a href="?page={{ p }}">{{ p }}</a>
+        </li>
+    {% endif %}
+        {% endfor %}
+
+{% if page_obj.has_next %}
+<li class="page-num">
+  <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+</li>
+{% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+<!-- Paginator end -->
+
+{% block content %}
+{% endblock %}
+
+<!-- Paginator start -->
+{% if page_obj.has_other_pages %}
+<nav class="list-pages">
+    <ul>
+{% if page_obj.has_previous %}
+<li class="page-num">
+	<a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+</li>
+{% endif %}
+
+        {% for p in paginator.page_range %}
+		{% if page_obj.number == p %}
+        <li class="page-num page-num-selected">{{ p }}</li>
+		{% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2  %}
+        <li class="page-num">
+            <a href="?page={{ p }}">{{ p }}</a>
+        </li>
+		{% endif %}
+        {% endfor %}
+
+{% if page_obj.has_next %}
+<li class="page-num">
+	<a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+</li>
+{% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+<!-- Paginator end -->
+ 
+</body>
+</html>

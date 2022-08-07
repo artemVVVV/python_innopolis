@@ -1,0 +1,63 @@
+{% extends 'data_sampling_file/base.html' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+
+      {% for file in page_obj %}
+      <div class="modal modal-sheet position-static d-block bg-dark " 
+      tabindex="-1" role="dialog" id="modalSheet">
+        <div class="modal-dialog mt-1 mb-1" role="document">
+          <div id="myModal" class="modal-content rounded-4 shadow">
+            <div class="modal-header border-bottom-0 py-1">
+              <h5 id="fa_{{ file.id }}" style="line-height: 1;" >
+                Автор: {{ file.user_avtor_file }} </h5>
+            </div>
+            <div class="modal-header py-0">
+              <h6 id="fn_{{ file.id }}" style="line-height: 1">
+                Название файла: {{ file.name_file }}
+                Дата создания: {{ file.date_file }}
+              </h6>
+            </div>
+            <div class="modal-body py-0">
+              <p> 
+                Всего ГП: {{ file.gp_all }}
+                Уникальных: ГП: {{ file.gp_unical }} 
+                Уникальных IP: {{ file.ip_unical }}
+                Уникальных MAC: {{ file.MAC_unical }}
+                Уникальных Проблем: {{ file.PROBLEM_unical }}
+              </p>
+              
+              {% for gp_top in file.file_incidendys.all %}
+                <p class="topgp"> 
+                  ТОП ГП: {{ gp_top.top_gp }} Count: {{ gp_top.count_top_gp }}
+                  ТОП IP: {{ gp_top.top_ip }} Count: {{ gp_top.count_top_ip }}
+                  ТОП MAC: {{ gp_top.top_mac }} Count: {{ gp_top.count_top_mac }}
+                </p> 
+                <p class="topgp">
+                  ТОП Проблем: {{ gp_top.top_problems }} 
+                  Count: {{ gp_top.count_top_problems }}
+                </p>
+              {% endfor %} 
+
+              <form method="post" >
+                <div class="input-group mb-1">
+                  <input type="text" style="display: none;" name="id_file"
+                   value = "{{ file.id }}">
+                  <input type="text" class="form-control" placeholder="Название файла" 
+                  id="rename_new" name="rename_new"> 
+                  {% csrf_token %}
+                  <button class="btn btn-primary bg-primary" type="submit" 
+                  name="check_btn" id="check_btn" value ="update">Изменить</button>
+                </div>
+                <button class="btn btn-primary float-end mt-2 mb-1 bg-primary" 
+                type="submit" name="check_btn" id="check_btn" 
+                value ="delete">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+{% endblock %}

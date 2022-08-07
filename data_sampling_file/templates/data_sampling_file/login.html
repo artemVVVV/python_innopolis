@@ -1,0 +1,30 @@
+{% extends 'data_sampling_file/base.html' %}
+
+
+{% block title%}
+Главная страница
+{% endblock %}
+
+{% block content %}
+  <div class="modal-dialog mt-1 mb-1" role="document">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header border-bottom-1">
+        <div class="modal-body py-0">
+          <div class="form-group">
+            <h2>Авторизация</h2>
+            <form method="post">
+              {% csrf_token %}
+              <div class="form-error">{{ form.non_field_errors }}</div>
+              {% for f in form %}
+              <label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}
+              <div class="form-error">{{ f.errors }}</div>
+              {% endfor %}
+              <button class="form-control mt-2 mb-1 bg-primary"type="submit">Войти</button>
+            </form>
+         </div>
+        </div>
+     </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
